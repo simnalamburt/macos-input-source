@@ -1,5 +1,5 @@
 const std = @import("std");
-const carbon = @cImport({
+const c = @cImport({
     @cInclude("Carbon/Carbon.h");
 });
 
@@ -10,6 +10,7 @@ pub fn helpThenExit() void {
         \\Usage: input-source <command>
         \\
         \\Commands:
+        \\  current       Show current input source
         \\  list          List available input sources
         \\  set <source>  Change input source to <source>
         \\
@@ -21,12 +22,33 @@ pub fn helpThenExit() void {
     std.os.exit(1);
 }
 
-pub fn main() void {
-    const argv = std.os.argv;
-    if (argv.len == 2 and std.mem.orderZ(u8, argv[1], "list") == .eq) {
-        //const inputSource = carbon.TISCreateInputSourceList();
-        //_ = inputSource;
+pub fn main() !void {
+    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
+    const alloc = allocator.allocator();
 
+    const argv = std.os.argv;
+    if (argv.len == 2 and std.mem.orderZ(u8, argv[1], "current") == .eq) {
+        const current = c.TISCopyCurrentKeyboardInputSource();
+
+        const name: c.CFStringRef = @ptrCast(c.CFRetain(c.TISGetInputSourceProperty(current, c.kTISPropertyLocalizedName)));
+        defer c.CFRelease(name);
+
+        const length: c.CFIndex = c.CFStringGetLength(name);
+        const maxSize: c.CFIndex = c.CFStringGetMaximumSizeForEncoding(length, c.kCFStringEncodingUTF8);
+        const size_ulong: c_ulong = @bitCast(maxSize);
+        const size: usize = @truncate(size_ulong);
+
+        var buf = try alloc.alloc(u8, size);
+        errdefer alloc.free(buf);
+
+        const ret = c.CFStringGetCString(name, &buf[0], maxSize, c.kCFStringEncodingUTF8);
+        if (ret != c.TRUE) {
+            // TODO: error
+            return error.Unreachable;
+        }
+
+        std.debug.print("{s}\n", .{buf});
+    } else if (argv.len == 2 and std.mem.orderZ(u8, argv[1], "list") == .eq) {
         // TODO
         std.debug.print("List input sources\n", .{});
     } else if (argv.len == 3 and std.mem.orderZ(u8, argv[1], "set") == .eq) {
