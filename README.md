@@ -31,7 +31,7 @@ Commands:
 
 Examples:
   input-source list
-  input-source set ABC
+  input-source set com.apple.keylayout.ABC
 ```
 
 &nbsp;
