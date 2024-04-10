@@ -11,7 +11,7 @@ brew install simnalamburt/x/input-source
 
 input-source is <!-- also --> provided as a single static universal binary.
 Whether you have an Mac with Apple silicon or Intel-based Mac, you can install
-totp by downloading just one file.
+input-source by downloading just one file.
 
 ```bash
 curl -LO https://github.com/simnalamburt/macos-input-source/releases/download/v0.1.1/input-source && chmod +x input-source
