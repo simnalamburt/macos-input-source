@@ -3,8 +3,10 @@ const std = @import("std");
 pub fn build(b: *std.Build) void {
     const aarch64 = b.addExecutable(.{
         .name = "input-source-aarch64",
-        .root_source_file = .{ .path = "main.zig" },
-        .target = std.zig.CrossTarget{ .cpu_arch = .aarch64 },
+        .root_source_file = b.path("main.zig"),
+        .target = b.resolveTargetQuery(.{
+            .cpu_arch = .aarch64,
+        }),
         .optimize = .ReleaseSmall,
         .single_threaded = true,
     });
@@ -12,8 +14,10 @@ pub fn build(b: *std.Build) void {
 
     const x86_64 = b.addExecutable(.{
         .name = "input-source-x86_64",
-        .root_source_file = .{ .path = "main.zig" },
-        .target = std.zig.CrossTarget{ .cpu_arch = .x86_64 },
+        .root_source_file = b.path("main.zig"),
+        .target = b.resolveTargetQuery(.{
+            .cpu_arch = .x86_64,
+        }),
         .optimize = .ReleaseSmall,
         .single_threaded = true,
     });

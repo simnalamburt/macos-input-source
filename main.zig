@@ -37,13 +37,13 @@ pub fn main() !void {
             c.kTISPropertyInputSourceID, id,
         }) orelse {
             std.debug.print("input-source: No such input source exists.\n", .{});
-            std.os.exit(1);
+            std.posix.exit(1);
         };
         defer c.CFRelease(list);
 
         if (len(list) != 1) {
             std.debug.print("input-source: Multiple input sources found with the given ID.\n", .{});
-            std.os.exit(1);
+            std.posix.exit(1);
         }
 
         const source = getRetained(list, 0) orelse return error.Unreachable; // TODO: error
@@ -52,7 +52,7 @@ pub fn main() !void {
         const status = c.TISSelectInputSource(source);
         if (status != 0) {
             std.debug.print("input-source: Could not change input language (OSStatus = {})", .{status});
-            std.os.exit(1);
+            std.posix.exit(1);
         }
     } else {
         std.debug.print(
@@ -70,7 +70,7 @@ pub fn main() !void {
             \\  input-source set com.apple.keylayout.ABC
             \\
         , .{});
-        std.os.exit(1);
+        std.posix.exit(1);
     }
 }
 
