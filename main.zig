@@ -26,15 +26,14 @@ pub fn main() !void {
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
 
-    // TODO: opt.localized_name
     switch (input) {
-        .current => {
+        .current => |*opt| {
             const source = c.TISCopyCurrentKeyboardInputSource();
             defer c.CFRelease(source);
 
-            try printID(allocator, source);
+            try printInputSource(allocator, source, opt.localized_name);
         },
-        .list => {
+        .list => |*opt| {
             const list = try querySources(.{
                 c.kTISPropertyInputSourceCategory,        c.kTISCategoryKeyboardInputSource,
                 c.kTISPropertyInputSourceIsSelectCapable, c.kCFBooleanTrue,
@@ -46,7 +45,7 @@ pub fn main() !void {
                 const source = getRetained(list, i);
                 defer c.CFRelease(source);
 
-                try printID(allocator, source);
+                try printInputSource(allocator, source, opt.localized_name);
             }
         },
         .set => |*opt| {
@@ -54,7 +53,7 @@ pub fn main() !void {
             defer c.CFRelease(id);
 
             const list = try querySources(.{
-                c.kTISPropertyInputSourceID, id,
+                if (opt.localized_name) c.kTISPropertyLocalizedName else c.kTISPropertyInputSourceID, id,
             }) orelse {
                 std.debug.print("input-source: No such input source exists.\n", .{});
                 std.posix.exit(1);
@@ -180,8 +179,8 @@ fn fromStringCreate(string: [*:0]const u8) !c.CFStringRef {
     return c.CFStringCreateWithBytes(@ptrFromInt(0), string, fromUsize(std.mem.len(string)), c.kCFStringEncodingUTF8, c.FALSE) orelse return error.Unreachable; // TODO: error
 }
 
-fn printID(allocator: Allocator, source: c.TISInputSourceRef) Allocator.Error!void {
-    const id: c.CFStringRef = @ptrCast(c.CFRetain(c.TISGetInputSourceProperty(source, c.kTISPropertyInputSourceID)));
+fn printInputSource(allocator: Allocator, source: c.TISInputSourceRef, localized_name: bool) Allocator.Error!void {
+    const id: c.CFStringRef = @ptrCast(c.CFRetain(c.TISGetInputSourceProperty(source, if (localized_name) c.kTISPropertyLocalizedName else c.kTISPropertyInputSourceID)));
     defer c.CFRelease(id);
 
     const buf = try toStringAlloc(allocator, id);
