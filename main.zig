@@ -103,7 +103,7 @@ fn toStringAlloc(allocator: Allocator, string: c.CFStringRef) Allocator.Error![]
     return buf;
 }
 
-fn fromStringCreate(string: [*:0]u8) !c.CFStringRef {
+fn fromStringCreate(string: [*:0]const u8) !c.CFStringRef {
     return c.CFStringCreateWithBytes(@ptrFromInt(0), string, fromUsize(std.mem.len(string)), c.kCFStringEncodingUTF8, c.FALSE) orelse return error.Unreachable; // TODO: error
 }
 
