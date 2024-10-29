@@ -12,12 +12,12 @@ pub fn main() !void {
     const allocator = gpa.allocator();
 
     const argv = std.os.argv;
-    if (argv.len == 2 and std.mem.orderZ(u8, argv[1], "current") == .eq) {
+    if (argv.len == 2 and strEqZ(argv[1], "current")) {
         const source = c.TISCopyCurrentKeyboardInputSource();
         defer c.CFRelease(source);
 
         try printID(allocator, source);
-    } else if (argv.len == 2 and std.mem.orderZ(u8, argv[1], "list") == .eq) {
+    } else if (argv.len == 2 and strEqZ(argv[1], "list")) {
         const list = try querySources(.{
             c.kTISPropertyInputSourceCategory,        c.kTISCategoryKeyboardInputSource,
             c.kTISPropertyInputSourceIsSelectCapable, c.kCFBooleanTrue,
@@ -31,7 +31,7 @@ pub fn main() !void {
 
             try printID(allocator, source);
         }
-    } else if (argv.len == 3 and std.mem.orderZ(u8, argv[1], "set") == .eq) {
+    } else if (argv.len == 3 and strEqZ(argv[1], "set")) {
         const id = try fromStringCreate(argv[2]);
         defer c.CFRelease(id);
 
@@ -86,6 +86,10 @@ inline fn toUsize(long: c_long) usize {
 
 inline fn fromUsize(size: usize) c.CFIndex {
     return @bitCast(@as(c_ulong, size));
+}
+
+inline fn strEqZ(lhs: [*:0]const u8, rhs: [*:0]const u8) bool {
+    return std.mem.orderZ(u8, lhs, rhs) == .eq;
 }
 
 fn toStringAlloc(allocator: Allocator, string: c.CFStringRef) Allocator.Error![]const u8 {
