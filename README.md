@@ -21,16 +21,23 @@ curl -LO https://github.com/simnalamburt/macos-input-source/releases/download/v0
 $ input-source
 tiny input source manager
 
-Usage: input-source <command>
+Usage: input-source <command> [--localized-name] [<args>]
 
 Commands:
-  current       Show current input source
-  list          List available input sources
-  set <Source>  Change input source to <source>
+  current           Show current input source
+  list              List available input sources
+  set <Source>      Change input source to <source>
+
+Options:
+  --localized-name  Use LocalizedName instead of InputSourceID
 
 Examples:
+  input-source current
+  input-source current --localized-name
   input-source list
+  input-source list --localized-name
   input-source set com.apple.keylayout.ABC
+  input-source set --localized-name ABC
 ```
 
 ### Development
