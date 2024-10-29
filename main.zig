@@ -57,23 +57,27 @@ pub fn main() !void {
             std.posix.exit(1);
         }
     } else {
-        std.debug.print(
-            \\tiny input source manager
-            \\
-            \\Usage: input-source <command>
-            \\
-            \\Commands:
-            \\  current       Show current input source
-            \\  list          List available input sources
-            \\  set <Source>  Change input source to <source>
-            \\
-            \\Examples:
-            \\  input-source list
-            \\  input-source set com.apple.keylayout.ABC
-            \\
-        , .{});
-        std.posix.exit(1);
+        showHelpThenExit();
     }
+}
+
+fn showHelpThenExit() noreturn {
+    std.debug.print(
+        \\tiny input source manager
+        \\
+        \\Usage: input-source <command>
+        \\
+        \\Commands:
+        \\  current       Show current input source
+        \\  list          List available input sources
+        \\  set <Source>  Change input source to <source>
+        \\
+        \\Examples:
+        \\  input-source list
+        \\  input-source set com.apple.keylayout.ABC
+        \\
+    , .{});
+    std.posix.exit(1);
 }
 
 inline fn toUsize(long: c_long) usize {
