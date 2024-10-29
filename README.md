@@ -12,7 +12,7 @@ have an Mac with Apple silicon or Intel-based Mac, you can install input-source
 by downloading just one file.
 
 ```bash
-curl -LO https://github.com/simnalamburt/macos-input-source/releases/download/v0.1.3/input-source &&\
+curl -LO https://github.com/simnalamburt/macos-input-source/releases/download/v0.1.4/input-source &&\
   chmod +x input-source
 ```
 
