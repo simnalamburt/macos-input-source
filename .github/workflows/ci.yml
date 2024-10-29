@@ -11,3 +11,4 @@ jobs:
       - run: |
           zig fmt --check .
           zig build
+          zig build -Duniversal-binary

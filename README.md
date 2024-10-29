@@ -35,6 +35,14 @@ Examples:
   input-source set com.apple.keylayout.ABC
 ```
 
+### Development
+```bash
+zig build
+
+# Build universal binary
+zig build -Duniversal-binary
+```
+
 &nbsp;
 
 --------

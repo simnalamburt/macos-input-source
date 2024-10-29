@@ -1,6 +1,22 @@
 const std = @import("std");
 
 pub fn build(b: *std.Build) void {
+    const is_universal = b.option(bool, "universal-binary", "Whether to build a Universal Binary") orelse false;
+
+    if (!is_universal) {
+        const exe = b.addExecutable(.{
+            .name = "input-source",
+            .root_source_file = b.path("main.zig"),
+            .target = b.standardTargetOptions(.{}),
+            .optimize = .ReleaseSmall,
+            .single_threaded = true,
+        });
+        exe.linkFramework("Carbon");
+
+        b.installArtifact(exe);
+        return;
+    }
+
     const aarch64 = b.addExecutable(.{
         .name = "input-source-aarch64",
         .root_source_file = b.path("main.zig"),
